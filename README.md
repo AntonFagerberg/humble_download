@@ -1,6 +1,6 @@
 HumbleDownload
 ==============
-HumbleDownload is used for downloading / making a complete back-up of your library from [Humble Bundle](http://humblebundle.com/) to your computer. It will download everything: games, books, music etc and try to group it together in folders based on the names (which isn't perfect unfortunately).
+HumbleDownload is used for downloading / making a complete back-up of your library from [Humble Bundle](http://humblebundle.com/) to your computer. It will download everything: games, books, music etc and try to group them together in folders based on the names (which isn't perfect unfortunately).
 
 ## Build the project
 First, [install Elixir](http://elixir-lang.org/install.html).
