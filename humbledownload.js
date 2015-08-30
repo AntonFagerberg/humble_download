@@ -1,22 +1,30 @@
-var $r = null;
-var $e = null;
-var name = null;
+(function () {
+  var size = gamekeys.length,
+      output = '';
 
-var res = [];
+  gamekeys.forEach(function (key) {
+    $.ajax({
+      url: 'https://www.humblebundle.com/api/v1/order/' + key + '?all_tpkds=true',
+      success: function(data) {
+        data.subproducts.forEach(function (product) {
+          product.downloads.forEach(function (download) {
+           download.download_struct.forEach(function (struct) {
+             if (struct.url) {
+               output += product.human_name.trim().replace(/(\r\n|\n|\r|\/)/gm,"") + '<br>' + struct.url.web.split('?')[0].split('.net/')[1] + '<br>' + struct.url.web + '<br>';
+             }
+           });
+          });
+        });
 
-$('.row').each(function (i, r) {
-  $r = $(r);
-  name = $r.attr('data-human-name').split('</br>').join('').split('<br>').join('').split('<br/>').join('').trim().replace(/(\r\n|\n|\r)/gm,"").split("/").join("");
-  
-  $r.find('a.a').each(function (i, e) {
-    $e = $(e);
-    res.push(name + '<br>' + $e.attr('href').split('?')[0].split('/')[3] + '<br>' + $e.attr('href') + '<br>');
-  });
-});
+        size--;
 
-$b = $('body');
-$b.empty();
-
-$(res).each(function (i, r) {
-  $b.append(r);
-});
+        if (size == 0) {
+          $('body').empty().append(output);
+        }
+      },
+      error: function () {
+        alert('Failed to retrieve a link, try again!');
+      }
+    });
+  })
+})();
