@@ -18,7 +18,7 @@ This will create the executable file "humble_download" which can be run on any s
 ```
 
 ## Create the input file
-Copy-paste the code from humbledownload.js in to the developer console in your browser when you're viewing your library on the Humble Bundle site. Copy-paste the result to a new text-file and use it as the input file as described above. The file should have three lines per item in your library: folder name, filename, link.
+Copy-paste the code from `humbledownload.js` in to the developer console in your browser when you're viewing your library on the Humble Bundle site. Copy-paste the result to a new text-file and use it as the input file as described above. If the copied data is very large, use an editor like Sublime Text to save it - or if you're on a Mac, you can use `pbpaste > some_file_name` in the terminal to create the file with the contents of the copied data.
 
 ## Important!
 The links are timed-based and will expire. When that happens, create another input file as before and restart humble_download with the new input file. The previously downloaded files will not be downloaded again.

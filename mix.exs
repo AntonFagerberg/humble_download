@@ -28,7 +28,10 @@ defmodule HumbleDownload.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    [{:httpoison, "~> 0.6"}]
+    [
+      {:httpoison, "~> 0.7.4"},
+      {:poison, "~> 1.5"}
+    ]
   end
   
   def escript do
