@@ -12,7 +12,7 @@ defmodule HumbleDownload do
             filename = Regex.run(~r/.*\/(.*)\?.*/, link) |> Enum.at(1)
             name = Map.get(map, "human_name", machine_name)
             
-            dir = base_path <> "/" <> machine_name
+            dir = base_path <> "/" <> name
             target = dir <> "/" <> filename
             tmp = base_path <> "/tmp"
             
