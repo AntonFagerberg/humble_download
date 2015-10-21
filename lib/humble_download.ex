@@ -1,9 +1,17 @@
 defmodule HumbleDownload do
   import File
   
-  def main([input, base_path]) do
+  def main([input, base_path, cookie]) do
     File.read!(input)
-    |> Poison.decode!
+    |> String.split("\n", trim: true)
+    |> Enum.map(&("https://www.humblebundle.com/api/v1/order/#{&1}?all_tpkds=true"))
+    |> Enum.map(&(HTTPoison.get(&1, [Cookie: "_simpleauth_sess=#{cookie}"])))
+    |> Enum.map(&parse_response/1)
+    |> Enum.each(&(download_bundle(&1, input, base_path)))
+  end
+  
+  defp download_bundle(subproducts, input, base_path) do
+    subproducts
     |> Enum.each(fn
       (%{"machine_name" => machine_name, "downloads" => downloads} = map) ->
         Enum.flat_map(downloads, &(Map.get(&1, "download_struct")))
@@ -21,16 +29,7 @@ defmodule HumbleDownload do
             if !File.exists?(target) do
               download_check(name, size, link, md5, tmp, target, dir)
             else 
-              IO.puts "\nExisting file found: \"#{target}\""
-              IO.write "Validating MD5 checksum... "
-              
-              if md5 != md5_file(target) do
-                IO.puts "Failed! Removing and re-downloading."
-                File.rm!(target)
-                download_check(name, size, link, md5, tmp, target, dir)
-              else
-                IO.puts "OK! Skipping."
-              end
+              IO.puts "Skipping existing file: #{target}"
             end
             
           invalid_struct -> 
@@ -38,6 +37,20 @@ defmodule HumbleDownload do
         end)
     end)
   end
+  
+  defp parse_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
+    body
+    |> Poison.decode!
+    |> Map.get("subproducts")
+  end
+  
+  defp parse_response({:ok, %HTTPoison.Response{status_code: status_code, body: body}}) do
+    throw "Unable to download bundle data, server responded with: #{body} (#{status_code})."
+  end
+  
+  defp parse_response({:error, %HTTPoison.Error{reason: reason}}) do
+    throw "Internal failure: #{inspect(reason)}"
+  end  
   
   defp md5_file(file) do
     File.stream!(file, [], 2048)
