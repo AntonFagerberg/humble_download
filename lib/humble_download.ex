@@ -5,7 +5,7 @@ defmodule HumbleDownload do
     File.read!(input)
     |> String.split("\n", trim: true)
     |> Enum.map(&("https://www.humblebundle.com/api/v1/order/#{&1}?all_tpkds=true"))
-    |> Enum.map(&(HTTPoison.get(&1, [Cookie: "_simpleauth_sess=#{cookie}"])))
+    |> Enum.map(&(HTTPoison.get(&1, [Cookie: "_simpleauth_sess=#{cookie}", timeout: 30_000, recv_timeout: 30_000])))
     |> Enum.map(&parse_response/1)
     |> Enum.each(&(download_bundle(&1, input, base_path)))
   end
@@ -65,7 +65,7 @@ defmodule HumbleDownload do
     mkdir_p!(dir)
     
     IO.write "Downloading... "
-    %HTTPoison.AsyncResponse{id: id} = HTTPoison.get!(link, %{}, stream_to: self)
+    %HTTPoison.AsyncResponse{id: id} = HTTPoison.get!(link, %{}, stream_to: self, timeout: 30_000, recv_timeout: 30_000)
     process(id, tmp)
     
     IO.write "Validating MD5 checksum... "
